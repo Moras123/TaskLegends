@@ -14,12 +14,14 @@ class _TaskListScreenState extends State<TaskListScreen> {
       appBar: AppBar(
         title: Text('Lista de Tareas'),
       ),
+      backgroundColor: Colors.orange, // Fondo naranja
       body: Column(
         children: [
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
+                dataRowColor: MaterialStateColor.resolveWith((states) => Colors.white), // Fondo de la tabla blanco
                 columns: [
                   DataColumn(label: Text('Tarea')),
                   DataColumn(label: Text('Acciones')),
@@ -40,10 +42,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                           icon: Icon(Icons.delete),
                           onPressed: () {
                             // Lógica para eliminar la tarea
-                            setState(() {
-                              tasks.remove(task);
-                            });
-                            print('Eliminar tarea: ${task.name}');
+                            _showDeleteConfirmationDialog(context, task);
                           },
                         ),
                         IconButton(
@@ -104,6 +103,35 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 }
               },
               child: Text('Agregar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, Task task) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Eliminar Tarea'),
+          content: Text('¿Estás seguro de que quieres eliminar la tarea "${task.name}"?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  tasks.remove(task);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Sí'),
             ),
             TextButton(
               onPressed: () {
