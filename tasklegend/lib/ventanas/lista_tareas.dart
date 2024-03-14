@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tasklegend/ventanas/addtaskscreen.dart';
+import 'package:tasklegend/ventanas/edittaskscreen.dart';
+import 'package:tasklegend/task.dart';
 
 class TaskListScreen extends StatefulWidget {
   @override
@@ -34,8 +37,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Lógica para editar la tarea
-                            print('Editar tarea: ${task.name}');
+                            // No hay ninguna acción aquí para evitar el error de compilación
                           },
                         ),
                         IconButton(
@@ -64,12 +66,34 @@ class _TaskListScreenState extends State<TaskListScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(width: 16), // Espacio entre los botones
                 FloatingActionButton(
                   onPressed: () {
-                    _showAddTaskDialog(context);
+                    // Navega a AddTaskScreen para agregar tarea
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddTaskScreen()),
+                    );
                   },
                   tooltip: 'Agregar Tarea',
                   child: Icon(Icons.add),
+                ),
+                SizedBox(width: 16), // Espacio entre los botones
+                FloatingActionButton(
+                  onPressed: () {
+                    // No hay ninguna acción aquí para evitar el error de compilación
+                  },
+                  tooltip: 'Editar Tarea',
+                  child: Icon(Icons.edit),
+                ),
+                SizedBox(width: 16), // Espacio entre los botones
+                FloatingActionButton(
+                  onPressed: () {
+                    // Acción para el botón de eliminar tarea
+                    print('Eliminar tarea');
+                  },
+                  tooltip: 'Eliminar Tarea',
+                  child: Icon(Icons.delete),
                 ),
               ],
             ),
