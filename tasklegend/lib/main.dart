@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasklegend/confscreen.dart';
+import 'package:tasklegend/ventanas/lista_tareas.dart';
 
 void main() {
   runApp(MyApp());
@@ -74,6 +75,10 @@ class MyHomePage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Acción para la Lista de Tareas
+                  onPressed: () {
+                  Navigator.push(
+                      context,
+                  MaterialPageRoute(builder: (context) => TaskListScreen()),);
                 },
                 child: Text('Lista de Tareas'),
                 style: ElevatedButton.styleFrom(
