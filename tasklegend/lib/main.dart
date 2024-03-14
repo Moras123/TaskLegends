@@ -74,8 +74,7 @@ class MyHomePage extends StatelessWidget {
               SizedBox(height: 48), // Espacio entre el logo y los botones
               ElevatedButton(
                 onPressed: () {
-                  // Acción para la Lista de Tareas
-                  onPressed: () {
+                  // Acción para la Lista de Tarea
                   Navigator.push(
                       context,
                   MaterialPageRoute(builder: (context) => TaskListScreen()),);
