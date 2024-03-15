@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfiguracionesScreen extends StatefulWidget {
   @override
@@ -7,6 +9,16 @@ class ConfiguracionesScreen extends StatefulWidget {
 
 class _ConfiguracionesScreenState extends State<ConfiguracionesScreen> {
   String _idiomaSeleccionado = 'Español';
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _selectImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('background_image', pickedFile.path);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +68,7 @@ class _ConfiguracionesScreenState extends State<ConfiguracionesScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: IconButton(
                 icon: Icon(Icons.add, color: Colors.white),
-                onPressed: () {
-                  // Acción para añadir imagen de fondo
-                },
+                onPressed: _selectImage, // Llama a la función para seleccionar la imagen
               ),
             ),
             // Añade más widgets de configuración aquí
