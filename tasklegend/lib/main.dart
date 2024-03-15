@@ -76,11 +76,11 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
       body: Container(
-        color: Color(0xFF003366),
+        color: Color(0xFF090E21),
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/fondolegends.jpg"),
+              image: AssetImage("assets/images/fondogokumain.jpg"),
               fit: BoxFit.contain,
             ),
           ),
