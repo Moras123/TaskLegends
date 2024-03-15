@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:tasklegend/confscreen.dart'; // Asegúrate de que este path sea correcto
 import 'package:tasklegend/ventanas/lista_tareas.dart'; // Asegúrate de que este path sea correcto
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tasklegend/ventanas/reporte.dart';
+
 
 String manualDeUsuario = """
 ¡Bienvenido a Task Legends!
@@ -123,6 +125,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 child: Text('Lista de Tareas'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.black, backgroundColor: Colors.orange,
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                ),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TaskReportPage()),
+                  );
+                },
+                child: Text('Reporte de Tareas'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black, backgroundColor: Colors.orange,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),

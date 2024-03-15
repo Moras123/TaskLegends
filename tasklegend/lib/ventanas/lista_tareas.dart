@@ -86,40 +86,18 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(width: 16), // Espacio entre los botones
-                FloatingActionButton(
-                  onPressed: () {
-                    // Navega a AddTaskScreen para agregar tarea
-                    _navigateToAddTaskScreen();
-                  },
-                  tooltip: 'Agregar Tarea',
-                  child: Icon(Icons.add),
-                ),
-                SizedBox(width: 16), // Espacio entre los botones
-                FloatingActionButton(
-                  onPressed: () {
-                    // No hay ninguna acción aquí para evitar el error de compilación
-                  },
-                  tooltip: 'Editar Tarea',
-                  child: Icon(Icons.edit),
-                ),
-                SizedBox(width: 16), // Espacio entre los botones
-                FloatingActionButton(
-                  onPressed: () {
-                    // Acción para el botón de eliminar tarea
-                    print('Eliminar tarea');
-                  },
-                  tooltip: 'Eliminar Tarea',
-                  child: Icon(Icons.delete),
-                ),
-              ],
+          SizedBox(height: 16), // Espacio entre la tabla y el contenedor del botón de agregar
+          Center( // Centro del botón de agregar
+            child: FloatingActionButton(
+              onPressed: () {
+                // Navega a AddTaskScreen para agregar tarea
+                _navigateToAddTaskScreen();
+              },
+              tooltip: 'Agregar Tarea',
+              child: Icon(Icons.add),
             ),
           ),
+          SizedBox(height: 16), // Espacio entre el contenedor del botón de agregar y el borde inferior
         ],
       ),
     );
