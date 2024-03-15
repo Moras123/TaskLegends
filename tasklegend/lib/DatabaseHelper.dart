@@ -23,7 +23,15 @@ class DatabaseHelper {
       version: 1,
     );
   }
-
+  static Future<void> modifyTask(String name, String newName) async {
+    final db = await database;
+    await db.update(
+      tableName,
+      {'task': newName},
+      where: 'task = ?',
+      whereArgs: [name],
+    );
+  }
   static Future<void> insertTask(String task) async {
     final db = await database;
     await db.insert(
@@ -39,6 +47,18 @@ class DatabaseHelper {
       {'task': newTask},
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+  static Future<List<Map<String, dynamic>>> readTable() async {
+    final db = await database;
+    return db.query(tableName);
+  }
+  static Future<void> deleteTask(String name) async {
+    final db = await database;
+    await db.delete(
+      tableName,
+      where: 'task = ?',
+      whereArgs: [name],
     );
   }
 }

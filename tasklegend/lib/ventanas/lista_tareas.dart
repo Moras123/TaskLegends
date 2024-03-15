@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tasklegend/ventanas/addtaskscreen.dart';
-import 'package:tasklegend/ventanas/edittaskscreen.dart';
-import 'package:tasklegend/task.dart';
+
+import '../DatabaseHelper.dart';
 
 class TaskListScreen extends StatefulWidget {
   @override
@@ -11,6 +11,31 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   List<Task> tasks = [];
 
+  void initState() {
+    super.initState();
+    _loadTasks(); // Carga las tareas al iniciar el estado del widget
+  }
+
+  void _loadTasks() async {
+    final List<Map<String, dynamic>> rows = await DatabaseHelper.readTable();
+    setState(() {
+      tasks = rows.map((row) => Task(name: row['task'])).toList();
+    });
+  }
+  void _navigateToAddTaskScreen() async {
+    final newTask = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddTaskScreen()),
+    );
+    if (newTask != null) {
+      setState(() {
+        tasks.add(newTask);
+      });
+    }
+    else{
+      _loadTasks();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +47,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+              scrollDirection: Axis.vertical,
               child: DataTable(
                 dataRowColor: MaterialStateColor.resolveWith((states) => Colors.white), // Fondo de la tabla blanco
                 columns: [
@@ -37,6 +62,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
+                            _showModifyConfirmationDialog(context, task);
                             // No hay ninguna acción aquí para evitar el error de compilación
                           },
                         ),
@@ -50,7 +76,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         IconButton(
                           icon: Icon(Icons.details),
                           onPressed: () {
-                            // Lógica para ver detalles de la tarea
                             print('Detalles de tarea: ${task.name}');
                           },
                         ),
@@ -70,10 +95,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 FloatingActionButton(
                   onPressed: () {
                     // Navega a AddTaskScreen para agregar tarea
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddTaskScreen()),
-                    );
+                    _navigateToAddTaskScreen();
                   },
                   tooltip: 'Agregar Tarea',
                   child: Icon(Icons.add),
@@ -103,30 +125,45 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  void _showAddTaskDialog(BuildContext context) {
+  void _showModifyConfirmationDialog(BuildContext context, Task task) {
+    final TextEditingController _newTaskNameController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String newTask = '';
         return AlertDialog(
-          title: Text('Agregar Tarea'),
-          content: TextField(
-            onChanged: (value) {
-              newTask = value;
-            },
-            decoration: InputDecoration(hintText: 'Nombre de la tarea'),
+          title: Text('Modificar Tarea'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Introduce el nuevo nombre de la tarea:'),
+              SizedBox(height: 8),
+              TextField(
+                controller: _newTaskNameController,
+                decoration: InputDecoration(
+                  labelText: 'Nuevo nombre',
+                ),
+              ),
+            ],
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                if (newTask.isNotEmpty) {
+              onPressed: () async {
+                final newTaskName = _newTaskNameController.text;
+                if (newTaskName.isNotEmpty) {
+                  await DatabaseHelper.modifyTask(task.name, newTaskName);
                   setState(() {
-                    tasks.add(Task(name: newTask));
+                    task.name = newTaskName;
                   });
                   Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Tarea modificada con éxito'),
+                    ),
+                  );
                 }
               },
-              child: Text('Agregar'),
+              child: Text('Guardar'),
             ),
             TextButton(
               onPressed: () {
@@ -139,7 +176,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
       },
     );
   }
-
   void _showDeleteConfirmationDialog(BuildContext context, Task task) {
     showDialog(
       context: context,
@@ -149,11 +185,17 @@ class _TaskListScreenState extends State<TaskListScreen> {
           content: Text('¿Estás seguro de que quieres eliminar la tarea "${task.name}"?'),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await DatabaseHelper.deleteTask(task.name);
                 setState(() {
                   tasks.remove(task);
                 });
                 Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Tarea eliminada con éxito'),
+                  ),
+                );
               },
               child: Text('Sí'),
             ),
@@ -169,6 +211,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 }
+
 
 class Task {
   String name;
