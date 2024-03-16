@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:tasklegend/DatabaseHelper.dart';
 import 'package:tasklegend/task.dart';
 
-class TaskReportPage extends StatefulWidget {
+class TaskReportPage2 extends StatefulWidget {
   @override
-  _TaskReportPageState createState() => _TaskReportPageState();
+  _TaskReportPageState2 createState() => _TaskReportPageState2();
 }
 
 
-class _TaskReportPageState extends State<TaskReportPage> {
+class _TaskReportPageState2 extends State<TaskReportPage2> {
   List<Task> tasks = []; // Tareas actuales
   List<Task> deletedTasks = []; // Tareas eliminadas
 
@@ -36,13 +36,13 @@ class _TaskReportPageState extends State<TaskReportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reporte de tareas'),
+        title: Text('Task Report'),
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Column(
           children: [
-            Text('Tareas actuales', style: Theme.of(context).textTheme.headline6),
+            Text('Current Tasks', style: Theme.of(context).textTheme.headline6),
             DataTable(
               columns: [
                 DataColumn(label: Text('ID')),
@@ -58,7 +58,7 @@ class _TaskReportPageState extends State<TaskReportPage> {
               ])).toList(),
             ),
             SizedBox(height: 20), // Espaciado entre tablas
-            Text('Tareas eliminadas', style: Theme.of(context).textTheme.headline6),
+            Text('Deleted Tasks', style: Theme.of(context).textTheme.headline6),
             DataTable(
               columns: [
                 DataColumn(label: Text('ID')),
