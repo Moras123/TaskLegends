@@ -1,6 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:tasklegend/confscreen.dart';
-import 'package:tasklegend/ventanas/lista_tareas.dart';
+import 'package:tasklegend/confscreen.dart'; // Asegúrate de que este path sea correcto
+import 'package:tasklegend/ventanas/lista_tareas.dart'; // Asegúrate de que este path sea correcto
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tasklegend/ventanas/reporte.dart';
+
+
+String manualDeUsuario = """
+¡Bienvenido a Task Legends!
+Esta app permitirá a verdaderos guerreros Z administrar su tiempo para ser la mejor versión de sí mismos.
+Solo debes presionar en una de las dos opciones, "Lista de tareas" o configuración si deseas realizar algunos ajustes estéticos.
+En "Lista de tareas" se maneja completamente la app, permitiendo añadir, quitar o actualizar tareas.  
+""";
 
 void main() {
   runApp(MyApp());
@@ -13,12 +25,9 @@ class MyApp extends StatelessWidget {
       title: 'Task Legends',
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        // Personalizando colores del AppBar y los iconos aquí
         appBarTheme: AppBarTheme(
-          
-          color: Colors.black, // Color de fondo del AppBar
-          iconTheme: IconThemeData(color: Colors.orange), // Color de los iconos
-          
+          color: Colors.black,
+          iconTheme: IconThemeData(color: Colors.orange),
         ),
       ),
       home: MyHomePage(),
@@ -26,7 +35,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String? backgroundImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBackgroundImage();
+  }
+
+  Future<void> _loadBackgroundImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      backgroundImage = prefs.getString('background_image') ?? "assets/images/fondogokumain.jpg";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,48 +65,64 @@ class MyHomePage extends StatelessWidget {
             icon: Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ConfiguracionesScreen()),
-              );
-              // Acción para la configuración
+                context,
+                MaterialPageRoute(builder: (context) => ConfiguracionesScreen()),
+              ).then((_) => _loadBackgroundImage()); // Recargar fondo al volver de Configuraciones
             },
-            
           ),
-          //espacio entre iconos
           SizedBox(width: 12),
           IconButton(
             icon: Icon(Icons.help_outline),
             onPressed: () {
-              // Acción para ayuda
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Manual de Usuario'),
+                    content: Text(manualDeUsuario),
+                    backgroundColor: Colors.orange,
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cerrar'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
       ),
       body: Container(
-        // Color de fondo que aparecerá donde la imagen no llegue a cubrir
-        color: Color(0xFF003366),
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/fondolegends.jpg"),
-              fit: BoxFit.contain, // Cambia a BoxFit.cover si deseas que la imagen cubra todo, pero se recorte
-            ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            // Verifica si backgroundImage es nulo antes de usarlo
+            image: backgroundImage != null
+                ? backgroundImage!.startsWith('assets/')
+                ? AssetImage(backgroundImage!) as ImageProvider
+                : FileImage(File(backgroundImage!))
+                : AssetImage("assets/images/fondogokumain.jpg"), // Imagen predeterminada
+            fit: BoxFit.cover,
           ),
-          child: Center(
+        ),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 200.0, // Establece un ancho para tu logo si es necesario
+                width: 200.0,
                 child: Image.asset('assets/images/tasklegends.jpg', fit: BoxFit.contain),
               ),
-              SizedBox(height: 48), // Espacio entre el logo y los botones
+              SizedBox(height: 48),
               ElevatedButton(
                 onPressed: () {
-                  // Acción para la Lista de Tarea
                   Navigator.push(
-                      context,
-                  MaterialPageRoute(builder: (context) => TaskListScreen()),);
+                    context,
+                    MaterialPageRoute(builder: (context) => TaskListScreen()),
+                  );
                 },
                 child: Text('Lista de Tareas'),
                 style: ElevatedButton.styleFrom(
@@ -85,10 +130,13 @@ class MyHomePage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
               ),
-              SizedBox(height: 24), // Espacio entre botones
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Acción para el Reporte de Tareas
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TaskReportPage()),
+                  );
                 },
                 child: Text('Reporte de Tareas'),
                 style: ElevatedButton.styleFrom(
@@ -100,8 +148,6 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
       ),
-      ),
     );
-
   }
 }

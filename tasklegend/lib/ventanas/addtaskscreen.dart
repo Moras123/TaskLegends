@@ -18,7 +18,7 @@ class _AddTaskWindowState extends State<AddTaskScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/fondoMUIG.jpg'),
+            image: AssetImage('assets/images/fondoAdd.jpg'),
             fit: BoxFit.cover,
           ),
         ),
