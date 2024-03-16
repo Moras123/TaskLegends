@@ -46,6 +46,14 @@ class DatabaseHelper {
     );
   }
 
+  static Future<void> insertTaskDelete(String task) async {
+    final db = await database;
+    await db.insert(
+      deletedTableName,
+      {'task': task, 'date': DateTime.now().toString(), 'status': 'Completado'},
+    );
+  }
+
   static Future<void> updateTask(int id, String newTask) async {
     final db = await database;
     await db.update(
@@ -65,8 +73,19 @@ class DatabaseHelper {
     return db.query('deleted_tasks');
   }
 
-
   static Future<void> deleteTask(String name) async {
+    final db = await database;
+    insertTaskDelete(name);
+    await db.delete(
+      tableName,
+      where: 'task = ?',
+      whereArgs: [name],
+    );
+  }
+
+
+
+  static Future<void> deleteTask_addDelete(String name) async {
     final db = await database;
 
     // Primero, obtener la tarea a eliminar

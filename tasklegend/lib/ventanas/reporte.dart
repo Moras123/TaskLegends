@@ -7,6 +7,7 @@ class TaskReportPage extends StatefulWidget {
   _TaskReportPageState createState() => _TaskReportPageState();
 }
 
+
 class _TaskReportPageState extends State<TaskReportPage> {
   List<Task> tasks = []; // Tareas actuales
   List<Task> deletedTasks = []; // Tareas eliminadas
@@ -14,24 +15,20 @@ class _TaskReportPageState extends State<TaskReportPage> {
   @override
   void initState() {
     super.initState();
-    loadTasks();
-    loadDeletedTasks();
+    _loadTasks();
+    _loadDeletedTasks();
   }
 
-  void loadTasks() {
-    // Aquí deberías cargar las tareas desde tu base de datos o fuente de datos
-    // Esto es solo un ejemplo de cómo podrías hacerlo
-    tasks = [
-      Task(id: 1, name: 'Task 1', date: '2024-03-15', status: 'Completed'),
-      Task(id: 2, name: 'Task 2', date: '2024-03-16', status: 'Pending'),
-    ];
-  }
-
-  Future<void> loadDeletedTasks() async {
-    // Suponiendo que readDeletedTasks es tu método para obtener tareas eliminadas
-    final deletedTasksData = await DatabaseHelper.readDeletedTasks();
+  void _loadTasks() async {
+    final List<Map<String, dynamic>> rows = await DatabaseHelper.readTable();
     setState(() {
-      deletedTasks = deletedTasksData.map((taskMap) => Task.fromMap(taskMap)).toList();
+      tasks = rows.map((row) => Task(name: row['task'], id: row['id'], date: row['date'], status: row['status'])).toList();
+    });
+  }
+  void _loadDeletedTasks() async {
+    final List<Map<String, dynamic>> rows = await DatabaseHelper.readDeletedTasks();
+    setState(() {
+      deletedTasks = rows.map((row) =>Task(name: row['task'], id: row['id'], date: row['date'], status: row['status'])).toList();
     });
   }
 
@@ -42,6 +39,7 @@ class _TaskReportPageState extends State<TaskReportPage> {
         title: Text('Task Report'),
       ),
       body: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
         child: Column(
           children: [
             Text('Current Tasks', style: Theme.of(context).textTheme.headline6),
@@ -80,4 +78,11 @@ class _TaskReportPageState extends State<TaskReportPage> {
       ),
     );
   }
+}
+class Task {
+  int id;
+  String name;
+  String date;
+  String status;
+  Task({required this.id,required this.name,required this.date,required this.status});
 }
